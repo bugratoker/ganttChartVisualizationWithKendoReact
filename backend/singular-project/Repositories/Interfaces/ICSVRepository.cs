@@ -8,5 +8,6 @@ namespace singular_project.Repositories.Interfaces
         Task<List<Entities.Task>> GetAsync(string name);
         Task<List<Entities.Task>> PostAsync(CSVRequest file);
         Task<List<string>> GetCSVNamesAsync();
+        Task<bool> IsCSVNameExist(string name);
     }
 }

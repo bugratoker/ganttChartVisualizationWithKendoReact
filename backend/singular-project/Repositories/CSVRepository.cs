@@ -64,5 +64,11 @@ namespace singular_project.Repositories
 
             return csvs;
         }
+
+        public async Task<bool> IsCSVNameExist(string name)
+        {
+            var isExist = await _db.Set<CSV>().AnyAsync(x=>x.Name==name);
+            return isExist;
+        }
     }
 }

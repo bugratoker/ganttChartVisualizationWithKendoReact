@@ -20,6 +20,12 @@ namespace singular_project.Services
 
         public async Task<List<Entities.Task>> Post(CSVRequest cSVRequest)
         {
+            var isExist = await CSVRepository.IsCSVNameExist(cSVRequest.CSVName);
+            if (isExist)
+            {
+                throw new BadHttpRequestException("CSV Name already exist");
+            }
+
             return await CSVRepository.PostAsync(cSVRequest);
         }
 
