@@ -9,13 +9,15 @@ const FromCsv = () => {
   let fileName;
   let objectifiedArray;
   let objectifiedArrayForDatabase;
-  const postCsvAsync = () => {
-    axios.post("https://localhost:7066/api/CSV",
-      { csvName: fileName, tasks: objectifiedArrayForDatabase }).then(res => console.log(res)
-      )
+
+  const postCsvAsync =  () => {
+    axios.post("https://localhost:7066/api/CSV",    //set current csv name
+      { csvName: fileName, tasks: objectifiedArrayForDatabase })
+      .then((res) =>  {if(res){setCurrentCsvName(fileName);setCsvNames(prevState => [...prevState, fileName]);} })
+      .catch(e=>alert("CSV Name already exist in this context"))
   }
 
-  console.log(csvData)
+  
   const processCSV = (file) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -75,7 +77,6 @@ const FromCsv = () => {
             percentComplete: 1
           };
         });
-        console.log(1, x,  res.data)
         setCsvData(x)
       })
       .catch(e => console.log(e))
@@ -86,10 +87,12 @@ const FromCsv = () => {
 
   const CsvToolBar = () => {
     if (csvNames.length != 0) {
-      console.log(csvNames)
+      console.log(currentCsvName)
       const options = csvNames.map(item => <option key={item} value={item}>{item}</option>);
+      
       return (
         <select value={currentCsvName} onChange={handleChange} style={selectStyle}>
+           <option disabled selected value> Select a file</option>
           {options}
         </select>
       );
@@ -136,16 +139,18 @@ const FromCsv = () => {
       getCSVTasks();
 
   }, [currentCsvName])
+
   useEffect(() => {
 
     getCsvNames();
 
   }, [])
+
   return (
     <div>
 
 
-      {csvData ? <App2 csvdata={csvData} /> : (
+      {csvData ? <div><CsvToolBar /><App2 csvdata={csvData} /></div> : (
         <div>
           <p>Please select a CSV file to import.</p>
           <input type="file" accept=".csv" onChange={handleImport} />
